@@ -275,7 +275,7 @@ defmodule Ecto.MigratorTest do
     end
   end
 
-  test "version migrations work iside directories" do
+  test "version migrations work inside directories" do
     in_tmp fn path ->
       File.mkdir_p!("foo")
       create_migration "foo/13_version_in_dir.exs"
@@ -297,6 +297,26 @@ defmodule Ecto.MigratorTest do
         {:up, 3, "up_migration_3"},
         {:down, 4, "down_migration_1"},
         {:down, 5, "down_migration_2"}
+      ]
+
+      assert migrations(TestRepo, path) == expected_result
+    end
+  end
+
+  test "migrations will give the migration status while file is deleted" do
+    in_tmp fn path ->
+      create_migration "1_up_migration_1.exs"
+      create_migration "2_up_migration_2.exs"
+      create_migration "3_up_migration_3.exs"
+      create_migration "4_down_migration_1.exs"
+
+      File.rm("2_up_migration_2.exs")
+
+      expected_result = [
+        {:up, 1, "up_migration_1"},
+        {:up, 2, "** FILE NOT FOUND **"},
+        {:up, 3, "up_migration_3"},
+        {:down, 4, "down_migration_1"},
       ]
 
       assert migrations(TestRepo, path) == expected_result

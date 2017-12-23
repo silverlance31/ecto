@@ -104,7 +104,7 @@ defmodule Ecto.Changeset do
   ## Associations, embeds and on replace
 
   Using changesets you can work with associations as well as with embedded
-  structs. Changesets provide a convenient way to working with associations
+  structs. Changesets provide a convenient way of working with associations
   as whole values - for example considering the entire list of `has_many`
   associations and not focusing just on a single one. Two main functions
   that provide this functionality are `cast_assoc/3` for working with external
@@ -123,8 +123,9 @@ defmodule Ecto.Changeset do
       embedded data via parent changeset - an error will be added to the parent
       changeset, and it will be marked as invalid
     * `:nilify` - sets owner reference column to `nil` (available only for
-      associations)
-    * `:update` - updates the association, available only for has_one and belongs_to.
+      associations). Use this on a `belongs_to` column to allow the association
+      to be cleared out so that it can be set to a new value.
+    * `:update` - updates the association, available only for `has_one` and `belongs_to`.
       This option will update all the fields given to the changeset including the id
       for the association
     * `:delete` - removes the association or related data from the database.

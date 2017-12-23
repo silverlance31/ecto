@@ -174,6 +174,11 @@ defmodule Ecto.Migration do
 
           config :app, App.Repo, migration_lock: nil
 
+    * `:migration_default_prefix` - Ecto defaults to `nil` for the database prefix for
+      migrations but you can configure it via:
+
+          config :app, App.Repo, migration_default_prefix: "kewl"
+
   """
 
   defmodule Index do
@@ -583,9 +588,10 @@ defmodule Ecto.Migration do
   defp default_index_name(index) do
     [index.table, index.columns, "index"]
     |> List.flatten
+    |> Enum.map(&to_string(&1))
+    |> Enum.map(&String.replace(&1, ~r"[^\w_]", "_"))
+    |> Enum.map(&String.replace_trailing(&1, "_", ""))
     |> Enum.join("_")
-    |> String.replace(~r"[^\w_]", "_")
-    |> String.replace("__", "_")
     |> String.to_atom
   end
 
@@ -924,7 +930,8 @@ defmodule Ecto.Migration do
 
     cond do
       is_nil(prefix) ->
-        %{index_or_table | prefix: runner_prefix}
+        prefix = runner_prefix || Runner.repo_config(:migration_default_prefix, nil)
+        %{index_or_table | prefix: prefix}
       is_nil(runner_prefix) or runner_prefix == to_string(prefix) ->
         index_or_table
       true ->
