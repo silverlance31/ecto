@@ -1,4 +1,4 @@
-﻿This is a test
+﻿This is just a test
 
 ![Ecto](https://github.com/elixir-ecto/ecto/raw/master/guides/images/logo.png)
 =========
